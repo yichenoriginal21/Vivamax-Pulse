@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0b0b0e] text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivamax Pulse</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pulseRed: '#E50914',
+                        pulseDark: '#0b0b0e',
+                        pulseCard: '#13131a',
+                        pulseBorder: '#272732'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0b0e; }
+        ::-webkit-scrollbar-thumb { background: #272732; border-radius: 9999px; }
+        .poster-card { transition: transform 0.25s ease; }
+        .poster-card:hover { transform: translateY(-6px); }
+    </style>
+</head>
+<body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
+
+    <!-- PASSWORD GATE MODAL (Built-in Password Security) -->
+    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
+        <div class="w-full max-w-md p-10 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
+            <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 bg-pulseRed/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed text-2xl shadow-inner">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+
+            <h1 class="text-2xl font-black text-white tracking-wider mb-1">VIVAMAX PULSE</h1>
+            <p class="text-xs text-neutral-400 mb-6">Enter access password to unlock portal.</p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Enter Password..." type="password">
+                    <p id="passError" class="text-red-400 text-xs mt-2 hidden font-medium flex items-center space-x-1">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> <span>Incorrect password. Try again!</span>
+                    </p>
+                </div>
+                
+                <button onclick="verifyPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
+                    Unlock Portal <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-pulseBorder text-[11px] text-neutral-500 flex justify-between items-center">
+                <span>Secure 18+ Vault</span>
+                <span class="text-emerald-500 font-mono"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Encrypted</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP HEADER NAVBAR -->
+    <header class="sticky top-0 z-40 bg-[#13131a]/90 backdrop-blur-md border-b border-pulseBorder px-4 sm:px-8 py-3.5 flex justify-between items-center">
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-2.5 cursor-pointer" onclick="returnHome()">
+                <div class="w-8 h-8 rounded bg-pulseRed flex items-center justify-center font-black text-white shadow-lg">
+                    <i class="fa-solid fa-play text-xs"></i>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white">VIVAMAX<span class="text-pulseRed">PULSE</span></h1>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Live Search Bar -->
+            <div class="relative w-40 sm:w-72">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search dramas..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
+            </div>
+            <button onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3 py-2 rounded-lg text-xs transition cursor-pointer text-neutral-300">
+                <i class="fa-solid fa-lock text-pulseRed"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN HOMEPAGE DIRECTORY VIEW -->
+    <main id="homeDirectory" class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-fire text-pulseRed"></i>
+                <span>Trending Releases</span>
+            </h2>
+            <span class="text-xs text-neutral-400 font-mono" id="showCountLabel">3 Shows Available</span>
+        </div>
+
+        <!-- Poster Grid -->
+        <div id="directoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            <!-- Dynamically populated -->
+        </div>
+    </main>
+
+    <!-- WATCH / PLAYER VIEW -->
+    <div id="watchView" class="max-w-7xl mx-auto px-4 sm:px-8 py-6 hidden">
+        <button onclick="returnHome()" class="mb-6 bg-pulseCard hover:bg-pulseBorder text-neutral-200 border border-pulseBorder px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 cursor-pointer shadow">
+            <i class="fa-solid fa-arrow-left text-pulseRed"></i>
+            <span>Back to Directory</span>
+        </button>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left: Video Iframe Player Container -->
+            <div class="lg:col-span-2 bg-pulseCard border border-pulseBorder rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                <div class="relative w-full aspect-video bg-black">
+                    <iframe id="activePlayerFrame" src="" scrolling="no" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+                </div>
+                <div class="p-4 bg-[#181822] border-t border-pulseBorder flex justify-between items-center">
+                    <div>
+                        <h3 id="playerShowTitle" class="text-sm sm:text-base font-bold text-white">Show Title</h3>
+                        <p id="playerEpisodeSubtitle" class="text-xs text-neutral-400 font-mono mt-0.5">Episode 1</p>
+                    </div>
+                    <span class="bg-pulseRed/20 text-pulseRed text-xs font-mono font-bold px-3 py-1 rounded border border-pulseRed/30">HD Stream</span>
+                </div>
+            </div>
+
+            <!-- Right: Select Episode Tray -->
+            <div class="bg-pulseCard border border-pulseBorder rounded-xl p-5 flex flex-col shadow-xl h-fit">
+                <div class="flex justify-between items-center border-b border-pulseBorder pb-3 mb-4">
+                    <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-list text-pulseRed"></i>
+                        <span>Select Episode</span>
+                    </h4>
+                    <span id="episodeCountBadge" class="text-[11px] font-mono bg-pulseBorder text-neutral-300 px-2.5 py-0.5 rounded-md">1 Ep</span>
+                </div>
+
+                <div id="episodeButtonsContainer" class="space-y-2.5 max-h-[400px] overflow-y-auto pr-1">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & BUILT-IN PASSWORD -->
+    <script>
+        // ==========================================
+        // SET YOUR PASSWORD HERE (No separate json needed)
+        // ==========================================
+        const MASTER_PASSWORD = "NETFLIX2026";
+
+        // Database containing your shows and individual episode links
+        const showsDatabase = [
+            {
+                id: "show-1",
+                title: "Simple yet Sexy",
+                poster: "https://cdn.myanimelist.net/images/anime/1139/110273.jpg",
+                badge: "COMPLETED",
+                description: "NA",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/1nog4osmcz1t" }
+                ]
+            },
+            {
+                id: "show-2",
+                title: "Furachi",
+                poster: "https://cdn.myanimelist.net/images/anime/1960/157146.jpg",
+                badge: "COMPLETED",
+                description: "NA.",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/si03wjqkbagr" }
+                ]
+            },
+            {
+                id: "show-3",
+                title: "HHH Triple Ecchi",
+                poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
+                badge: "COMPLETED",
+                description: "NA",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/db6ckrlr9mzt" }
+                ]
+            }
+            {
+                id: "show-4",
+                title: "Aniyome wa Ijippari",
+                poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
+                description: "NA.",
+                episodes: [
+                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
+                ]
+            }
+            {
+                id: "show-5",
+                title: "Inaka ni wa Kore Kurai Shika Goraku ga Nai",
+                poster: "https://cdn.myanimelist.net/images/anime/1865/158417.jpg",
+                description: "NA",
+                episodes: [
+                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/d6y3ma099mc9
+" },
+                ]
+            },
+            {
+                id: "show-6",
+                title: "Seika Jogakuin Kounin Sao Ojisan",
+                poster: "https://cdn.myanimelist.net/images/anime/1386/123114.jpg",
+                description: "NA.",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" },
+                ]
+            },
+
+        ];
+
+        window.addEventListener('DOMContentLoaded', function() {
+            renderDirectory(showsDatabase);
+
+            // Check if user already unlocked the site previously
+            if (localStorage.getItem('vivamax_user_unlocked') === 'true') {
+                var modal = document.getElementById('passwordModal');
+                if (modal) modal.style.display = 'none';
+            }
+        });
+
+        function verifyPassword() {
+            var inputElem = document.getElementById('passInput');
+            var errorElem = document.getElementById('passError');
+            if (!inputElem || !errorElem) return;
+
+            var val = inputElem.value.trim();
+            if (val === MASTER_PASSWORD) {
+                localStorage.setItem('vivamax_user_unlocked', 'true');
+                errorElem.style.display = 'none';
+                var modal = document.getElementById('passwordModal');
+                if (modal) modal.style.display = 'none';
+            } else {
+                errorElem.style.display = 'flex';
+            }
+        }
+
+        function lockVault() {
+            localStorage.removeItem('vivamax_user_unlocked');
+            var modal = document.getElementById('passwordModal');
+            if (modal) modal.style.display = 'flex';
+            var inputElem = document.getElementById('passInput');
+            if (inputElem) inputElem.value = '';
+        }
+
+        function renderDirectory(shows) {
+            const grid = document.getElementById('directoryGrid');
+            if (!grid) return;
+
+            let html = '';
+            shows.forEach(show => {
+                const viewKey = `views_${show.id}`;
+                const viewsCount = localStorage.getItem(viewKey) || Math.floor(Math.random() * 3000 + 1200);
+
+                html += `
+                    <div onclick="openWatchView('${show.id}', 0)" class="poster-card group bg-pulseCard border border-pulseBorder rounded-xl overflow-hidden shadow-xl cursor-pointer flex flex-col justify-between">
+                        <div class="relative aspect-[2/3] w-full overflow-hidden bg-black">
+                            <img src="${show.poster}" alt="${show.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-2 left-2 bg-pulseRed text-[9px] font-black px-2 py-0.5 rounded text-white shadow font-mono">${show.badge}</span>
+                        </div>
+                        <div class="p-3 flex flex-col flex-grow justify-between">
+                            <div>
+                                <h3 class="font-bold text-xs text-white mb-1 group-hover:text-pulseRed transition line-clamp-1">${show.title}</h3>
+                                <p class="text-[10px] text-neutral-400">${show.episodes.length} Episodes</p>
+                            </div>
+                            <div class="mt-3 pt-2 border-t border-pulseBorder flex justify-between items-center text-[10px] text-neutral-400 font-mono">
+                                <span><i class="fa-solid fa-eye text-pulseRed mr-1"></i>${parseInt(viewsCount).toLocaleString()}</span>
+                                <span class="text-pulseRed font-bold">Watch</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+            document.getElementById('showCountLabel').textContent = `${shows.length} Shows Available`;
+        }
+
+        function filterShows() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = showsDatabase.filter(s => s.title.toLowerCase().includes(query));
+            renderDirectory(filtered);
+        }
+
+        function openWatchView(showId, epIndex) {
+            const show = showsDatabase.find(s => s.id === showId);
+            if (!show) return;
+
+            const episode = show.episodes[epIndex] || show.episodes[0];
+
+            // Increment Live Views
+            const viewKey = `views_${show.id}`;
+            let currentViews = parseInt(localStorage.getItem(viewKey) || '1200', 10) + 1;
+            localStorage.setItem(viewKey, currentViews);
+
+            // Populate Player Header & Stream Frame
+            document.getElementById('playerShowTitle').textContent = show.title;
+            document.getElementById('playerEpisodeSubtitle').textContent = `Episode ${episode.ep}: ${episode.title}`;
+            document.getElementById('activePlayerFrame').src = episode.link;
+
+            // Populate Right Sidebar Episode Buttons
+            const epContainer = document.getElementById('episodeButtonsContainer');
+            let epHtml = '';
+            show.episodes.forEach((ep, idx) => {
+                const isActive = idx === epIndex;
+                epHtml += `
+                    <button onclick="openWatchView('${show.id}', ${idx})" class="w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition cursor-pointer border ${isActive ? 'bg-pulseRed border-pulseRed text-white font-bold shadow-lg shadow-pulseRed/20' : 'bg-[#0b0b0e] border-pulseBorder hover:border-neutral-500 text-neutral-300'}">
+                        <span class="text-xs">Episode ${ep.ep}</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
+                `;
+            });
+            epContainer.innerHTML = epHtml;
+            document.getElementById('episodeCountBadge').textContent = `${show.episodes.length} Eps`;
+
+            // Switch UI Views
+            document.getElementById('homeDirectory').style.display = 'none';
+            document.getElementById('watchView').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function returnHome() {
+            document.getElementById('activePlayerFrame').src = ''; // Stop playback
+            document.getElementById('watchView').style.display = 'none';
+            document.getElementById('homeDirectory').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
