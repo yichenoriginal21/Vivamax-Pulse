@@ -31,8 +31,8 @@
 </head>
 <body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
 
-    <!-- PASSWORD GATE MODAL (Built-in Password Security) -->
-    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
+    <!-- PASSWORD GATE MODAL -->
+    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md px-4">
         <div class="w-full max-w-md p-10 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
             <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 bg-pulseRed/15 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -51,7 +51,7 @@
                     </p>
                 </div>
                 
-                <button onclick="verifyPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
+                <button onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
                     Unlock Portal <i class="fa-solid fa-arrow-right ml-1.5"></i>
                 </button>
             </div>
@@ -75,7 +75,6 @@
         </div>
 
         <div class="flex items-center space-x-3">
-            <!-- Live Search Bar -->
             <div class="relative w-40 sm:w-72">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -98,7 +97,6 @@
             <span class="text-xs text-neutral-400 font-mono" id="showCountLabel">3 Shows Available</span>
         </div>
 
-        <!-- Poster Grid -->
         <div id="directoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             <!-- Dynamically populated -->
         </div>
@@ -112,7 +110,6 @@
         </button>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left: Video Iframe Player Container -->
             <div class="lg:col-span-2 bg-pulseCard border border-pulseBorder rounded-xl overflow-hidden shadow-2xl flex flex-col">
                 <div class="relative w-full aspect-video bg-black">
                     <iframe id="activePlayerFrame" src="" scrolling="no" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
@@ -126,7 +123,6 @@
                 </div>
             </div>
 
-            <!-- Right: Select Episode Tray -->
             <div class="bg-pulseCard border border-pulseBorder rounded-xl p-5 flex flex-col shadow-xl h-fit">
                 <div class="flex justify-between items-center border-b border-pulseBorder pb-3 mb-4">
                     <h4 class="text-sm font-bold text-white flex items-center space-x-2">
@@ -143,21 +139,17 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC & BUILT-IN PASSWORD -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // ==========================================
-        // SET YOUR PASSWORD HERE (No separate json needed)
-        // ==========================================
+        // MASTER PASSWORD (Change here if you want a different password)
         const MASTER_PASSWORD = "NETFLIX2026";
 
-        // Database containing your shows and individual episode links
         const showsDatabase = [
             {
                 id: "show-1",
                 title: "Simple yet Sexy",
                 poster: "https://cdn.myanimelist.net/images/anime/1139/110273.jpg",
                 badge: "COMPLETED",
-                description: "NA",
                 episodes: [
                     { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/1nog4osmcz1t" }
                 ]
@@ -167,30 +159,10 @@
                 title: "Furachi",
                 poster: "https://cdn.myanimelist.net/images/anime/1960/157146.jpg",
                 badge: "COMPLETED",
-                description: "NA.",
                 episodes: [
                     { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/si03wjqkbagr" }
                 ]
             },
-            {
-                id: "show-3",
-                title: "HHH Triple Ecchi",
-                poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
-                badge: "COMPLETED",
-                description: "NA",
-                episodes: [
-                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/db6ckrlr9mzt" }
-                ]
-            }
-            {
-                id: "show-4",
-                title: "Aniyome wa Ijippari",
-                poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
-                description: "NA.",
-                episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
-                ]
-            }
             {
                 id: "show-5",
                 title: "Inaka ni wa Kore Kurai Shika Goraku ga Nai",
@@ -210,41 +182,61 @@
                     { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" },
                 ]
             },
+            {
+                id: "show-4",
+                title: "Aniyome wa Ijippari",
+                poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
+                description: "NA.",
+                episodes: [
+                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
+                ]
+            },
+            {
+                id: "show-3",
+                title: "HHH Triple Ecchi",
+                poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
+                badge: "COMPLETED",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/db6ckrlr9mzt" }
+                ]
+            }
 
         ];
 
         window.addEventListener('DOMContentLoaded', function() {
             renderDirectory(showsDatabase);
 
-            // Check if user already unlocked the site previously
-            if (localStorage.getItem('vivamax_user_unlocked') === 'true') {
-                var modal = document.getElementById('passwordModal');
-                if (modal) modal.style.display = 'none';
+            // Check if user already unlocked previously
+            if (localStorage.getItem('vivamax_unlocked') === 'true') {
+                document.getElementById('passwordModal').style.display = 'none';
             }
+
+            // Allow pressing Enter key to submit password
+            document.getElementById('passInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
         });
 
-        function verifyPassword() {
-            var inputElem = document.getElementById('passInput');
+        function checkPassword() {
+            var inputVal = document.getElementById('passInput').value.trim();
             var errorElem = document.getElementById('passError');
-            if (!inputElem || !errorElem) return;
 
-            var val = inputElem.value.trim();
-            if (val === MASTER_PASSWORD) {
-                localStorage.setItem('vivamax_user_unlocked', 'true');
+            if (inputVal === MASTER_PASSWORD) {
+                localStorage.setItem('vivamax_unlocked', 'true');
                 errorElem.style.display = 'none';
-                var modal = document.getElementById('passwordModal');
-                if (modal) modal.style.display = 'none';
+                document.getElementById('passwordModal').style.display = 'none';
             } else {
                 errorElem.style.display = 'flex';
             }
         }
 
         function lockVault() {
-            localStorage.removeItem('vivamax_user_unlocked');
-            var modal = document.getElementById('passwordModal');
-            if (modal) modal.style.display = 'flex';
-            var inputElem = document.getElementById('passInput');
-            if (inputElem) inputElem.value = '';
+            localStorage.removeItem('vivamax_unlocked');
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passInput').value = '';
+            document.getElementById('passError').style.display = 'none';
         }
 
         function renderDirectory(shows) {
@@ -291,17 +283,14 @@
 
             const episode = show.episodes[epIndex] || show.episodes[0];
 
-            // Increment Live Views
             const viewKey = `views_${show.id}`;
             let currentViews = parseInt(localStorage.getItem(viewKey) || '1200', 10) + 1;
             localStorage.setItem(viewKey, currentViews);
 
-            // Populate Player Header & Stream Frame
             document.getElementById('playerShowTitle').textContent = show.title;
             document.getElementById('playerEpisodeSubtitle').textContent = `Episode ${episode.ep}: ${episode.title}`;
             document.getElementById('activePlayerFrame').src = episode.link;
 
-            // Populate Right Sidebar Episode Buttons
             const epContainer = document.getElementById('episodeButtonsContainer');
             let epHtml = '';
             show.episodes.forEach((ep, idx) => {
@@ -316,14 +305,13 @@
             epContainer.innerHTML = epHtml;
             document.getElementById('episodeCountBadge').textContent = `${show.episodes.length} Eps`;
 
-            // Switch UI Views
             document.getElementById('homeDirectory').style.display = 'none';
             document.getElementById('watchView').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function returnHome() {
-            document.getElementById('activePlayerFrame').src = ''; // Stop playback
+            document.getElementById('activePlayerFrame').src = '';
             document.getElementById('watchView').style.display = 'none';
             document.getElementById('homeDirectory').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
