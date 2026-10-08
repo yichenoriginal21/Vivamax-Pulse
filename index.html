@@ -45,13 +45,13 @@
             
             <div class="space-y-4 text-left">
                 <div>
-                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Enter Password..." type="password">
+                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Enter Password (NETFLIX2026)..." type="password">
                     <p id="passError" class="text-red-400 text-xs mt-2 hidden font-medium flex items-center space-x-1">
                         <i class="fa-solid fa-circle-exclamation mr-1"></i> <span>Incorrect password. Try again!</span>
                     </p>
                 </div>
                 
-                <button onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
+                <button type="button" onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
                     Unlock Portal <i class="fa-solid fa-arrow-right ml-1.5"></i>
                 </button>
             </div>
@@ -81,7 +81,7 @@
                 </span>
                 <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search dramas..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
             </div>
-            <button onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3 py-2 rounded-lg text-xs transition cursor-pointer text-neutral-300">
+            <button type="button" onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3 py-2 rounded-lg text-xs transition cursor-pointer text-neutral-300">
                 <i class="fa-solid fa-lock text-pulseRed"></i>
             </button>
         </div>
@@ -104,7 +104,7 @@
 
     <!-- WATCH / PLAYER VIEW -->
     <div id="watchView" class="max-w-7xl mx-auto px-4 sm:px-8 py-6 hidden">
-        <button onclick="returnHome()" class="mb-6 bg-pulseCard hover:bg-pulseBorder text-neutral-200 border border-pulseBorder px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 cursor-pointer shadow">
+        <button type="button" onclick="returnHome()" class="mb-6 bg-pulseCard hover:bg-pulseBorder text-neutral-200 border border-pulseBorder px-4 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-2 cursor-pointer shadow">
             <i class="fa-solid fa-arrow-left text-pulseRed"></i>
             <span>Back to Directory</span>
         </button>
@@ -141,7 +141,6 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // MASTER PASSWORD (Change here if you want a different password)
         const MASTER_PASSWORD = "NETFLIX2026";
 
         const showsDatabase = [
@@ -164,34 +163,6 @@
                 ]
             },
             {
-                id: "show-5",
-                title: "Inaka ni wa Kore Kurai Shika Goraku ga Nai",
-                poster: "https://cdn.myanimelist.net/images/anime/1865/158417.jpg",
-                description: "NA",
-                episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/d6y3ma099mc9
-" },
-                ]
-            },
-            {
-                id: "show-6",
-                title: "Seika Jogakuin Kounin Sao Ojisan",
-                poster: "https://cdn.myanimelist.net/images/anime/1386/123114.jpg",
-                description: "NA.",
-                episodes: [
-                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" },
-                ]
-            },
-            {
-                id: "show-4",
-                title: "Aniyome wa Ijippari",
-                poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
-                description: "NA.",
-                episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
-                ]
-            },
-            {
                 id: "show-3",
                 title: "HHH Triple Ecchi",
                 poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
@@ -200,30 +171,32 @@
                     { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/db6ckrlr9mzt" }
                 ]
             }
-
         ];
 
         window.addEventListener('DOMContentLoaded', function() {
             renderDirectory(showsDatabase);
 
-            // Check if user already unlocked previously
             if (localStorage.getItem('vivamax_unlocked') === 'true') {
                 document.getElementById('passwordModal').style.display = 'none';
             }
 
-            // Allow pressing Enter key to submit password
-            document.getElementById('passInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkPassword();
-                }
-            });
+            const inputField = document.getElementById('passInput');
+            if (inputField) {
+                inputField.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
         });
 
         function checkPassword() {
-            var inputVal = document.getElementById('passInput').value.trim();
-            var errorElem = document.getElementById('passError');
+            const inputElem = document.getElementById('passInput');
+            const errorElem = document.getElementById('passError');
+            if (!inputElem || !errorElem) return;
 
-            if (inputVal === MASTER_PASSWORD) {
+            const val = inputElem.value.trim();
+            if (val === MASTER_PASSWORD) {
                 localStorage.setItem('vivamax_unlocked', 'true');
                 errorElem.style.display = 'none';
                 document.getElementById('passwordModal').style.display = 'none';
@@ -296,7 +269,7 @@
             show.episodes.forEach((ep, idx) => {
                 const isActive = idx === epIndex;
                 epHtml += `
-                    <button onclick="openWatchView('${show.id}', ${idx})" class="w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition cursor-pointer border ${isActive ? 'bg-pulseRed border-pulseRed text-white font-bold shadow-lg shadow-pulseRed/20' : 'bg-[#0b0b0e] border-pulseBorder hover:border-neutral-500 text-neutral-300'}">
+                    <button type="button" onclick="openWatchView('${show.id}', ${idx})" class="w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition cursor-pointer border ${isActive ? 'bg-pulseRed border-pulseRed text-white font-bold shadow-lg shadow-pulseRed/20' : 'bg-[#0b0b0e] border-pulseBorder hover:border-neutral-500 text-neutral-300'}">
                         <span class="text-xs">Episode ${ep.ep}</span>
                         <i class="fa-solid fa-chevron-right text-[10px]"></i>
                     </button>
