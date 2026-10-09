@@ -70,6 +70,7 @@
                     <i class="fa-solid fa-heart"></i>
                     <span>Community Supported Streaming</span>
                 </span>
+
                 <h2 class="text-2xl sm:text-4xl font-black text-white tracking-wide mb-3">Maligayang Pagdating sa Vivamax Pulse!</h2>
                 <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-6">
                     Ang website na ito ay nananatiling libre at bukas para sa lahat sa pamamagitan ng inyong tulong. Kung nais ninyong suportahan ang pagpapanatili ng server at pagdagdag ng mga bagong palabas, maaari kayong mag-donate ng kahit magkano sa aming GCash account. Maraming salamat! ❤️
@@ -172,30 +173,29 @@
                 id: "show-5",
                 title: "Inaka ni wa Kore Kurai Shika Goraku ga Nai",
                 poster: "https://cdn.myanimelist.net/images/anime/1865/158417.jpg",
-                description: "NA",
+                badge: "COMPLETED",
                 episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/d6y3ma099mc9
-" },
+                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/d6y3ma099mc9" }
                 ]
             },
             {
                 id: "show-6",
                 title: "Seika Jogakuin Kounin Sao Ojisan",
                 poster: "https://cdn.myanimelist.net/images/anime/1386/123114.jpg",
-                description: "NA.",
+                badge: "COMPLETED",
                 episodes: [
-                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" },
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" }
                 ]
             },
             {
                 id: "show-4",
                 title: "Aniyome wa Ijippari",
                 poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
-                description: "NA.",
+                badge: "COMPLETED",
                 episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
+                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" }
                 ]
-            }
+            },
             {
                 id: "show_hhh_triple_2026",
                 title: "HHH Triple Ecchi",
@@ -215,7 +215,6 @@
         function copyGcashNumber() {
             const textToCopy = "+639450892979";
             
-            // Safe fallback clipboard copy method to prevent permission policy errors
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     showCopiedFeedback();
@@ -230,7 +229,7 @@
         function fallbackCopyText(text) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
-            textArea.style.position = "fixed";  // Avoid scrolling to bottom
+            textArea.style.position = "fixed";
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
