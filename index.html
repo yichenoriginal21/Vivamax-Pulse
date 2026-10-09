@@ -31,21 +31,21 @@
 </head>
 <body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
 
-    <!-- DONATION POPUP MODAL (Appears on entry) -->
-    <div id="donationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
+    <!-- SUPPORTER / PASSWORD GATE MODAL -->
+    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md px-4">
         <div class="w-full max-w-md p-8 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
             
             <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed text-xl shadow-inner">
-                <i class="fa-solid fa-heart"></i>
+                <i class="fa-solid fa-lock"></i>
             </div>
 
             <h2 class="text-xl font-black text-white tracking-wider mb-2">SUPORTAHAN ANG WEBSITE</h2>
-            <p class="text-xs text-neutral-300 mb-5 leading-relaxed">
-                Para mapanatiling bukas at libre ang website na ito, mangyaring mag-donate ng kahit anong halaga sa aming GCash account. Maraming salamat sa inyong suporta! ❤️
+            <p class="text-xs text-neutral-300 mb-4 leading-relaxed">
+                Para mapanatiling bukas ang website na ito, mangyaring mag-donate sa aming GCash account. Pagkatapos mag-donate, makukuha mo ang secret password para makapanood! ❤️
             </p>
             
             <!-- GCash Account Details Box -->
-            <div class="bg-[#0b0b0e] border border-pulseBorder rounded-xl p-4 mb-5 text-left space-y-2">
+            <div class="bg-[#0b0b0e] border border-pulseBorder rounded-xl p-4 mb-4 text-left space-y-2">
                 <div class="flex justify-between items-center text-xs text-neutral-400">
                     <span>Account Name:</span>
                     <strong class="text-white font-mono tracking-wider">RO••••E C.</strong>
@@ -54,15 +54,24 @@
                     <span>GCash Number:</span>
                     <strong class="text-pulseRed font-mono tracking-widest text-sm">+63 945 089 2979</strong>
                 </div>
-                <button type="button" onclick="copyGcashNumber()" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center space-x-1.5 cursor-pointer shadow">
+                <button type="button" onclick="copyGcashNumber()" class="w-full mt-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-bold py-2 rounded transition flex items-center justify-center space-x-1 cursor-pointer">
                     <i class="fa-regular fa-copy"></i>
                     <span id="copyBtnText">Kopyahin ang GCash Number (Copy)</span>
                 </button>
             </div>
 
-            <div class="space-y-2.5">
-                <button type="button" onclick="closeDonationModal()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
-                    Panoorin Na (Watch Now) <i class="fa-solid fa-play ml-1.5 text-[10px]"></i>
+            <!-- Password Entry for Supporters/Admins -->
+            <div class="space-y-3 text-left border-t border-pulseBorder pt-4">
+                <label class="block text-[11px] text-neutral-400 font-mono">May password ka na ba galing sa admin? Ilagay dito:</label>
+                <div>
+                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Ilagay ang Secret Password..." type="password">
+                    <p id="passError" class="text-red-400 text-xs mt-1.5 hidden font-medium flex items-center space-x-1">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> <span>Maling password. Mag-donate muna para makuha ito!</span>
+                    </p>
+                </div>
+                
+                <button type="button" onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
+                    I-unlock ang Website <i class="fa-solid fa-arrow-right ml-1.5"></i>
                 </button>
             </div>
         </div>
@@ -86,9 +95,9 @@
                 </span>
                 <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search dramas..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
             </div>
-            <button type="button" onclick="openDonationModal()" title="Support Us" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-pulseRed font-bold flex items-center space-x-1.5">
-                <i class="fa-solid fa-heart"></i>
-                <span class="hidden sm:inline">Donate</span>
+            <button type="button" onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-pulseRed font-bold flex items-center space-x-1.5">
+                <i class="fa-solid fa-lock"></i>
+                <span class="hidden sm:inline">I-lock</span>
             </button>
         </div>
     </header>
@@ -147,6 +156,9 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // MASTER PASSWORD FOR DONORS & ADMIN
+        const MASTER_PASSWORD = "NETFLIX2026";
+
         const showsDatabase = [
             {
                 id: "show_simple_sexy_2026",
@@ -167,34 +179,6 @@
                 ]
             },
             {
-                id: "show-5",
-                title: "Inaka ni wa Kore Kurai Shika Goraku ga Nai",
-                poster: "https://cdn.myanimelist.net/images/anime/1865/158417.jpg",
-                description: "NA",
-                episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/d6y3ma099mc9
-" },
-                ]
-            },
-            {
-                id: "show-6",
-                title: "Seika Jogakuin Kounin Sao Ojisan",
-                poster: "https://cdn.myanimelist.net/images/anime/1386/123114.jpg",
-                description: "NA.",
-                episodes: [
-                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/jknsod8252cw" },
-                ]
-            },
-            {
-                id: "show-4",
-                title: "Aniyome wa Ijippari",
-                poster: "https://cdn.myanimelist.net/images/anime/1327/103813.jpg",
-                description: "NA.",
-                episodes: [
-                    { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
-                ]
-            }
-            {
                 id: "show_hhh_triple_2026",
                 title: "HHH Triple Ecchi",
                 poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
@@ -208,23 +192,55 @@
         window.addEventListener('DOMContentLoaded', function() {
             renderDirectory(showsDatabase);
             fetchAllLiveViews();
+
+            if (localStorage.getItem('vivamax_unlocked') === 'true') {
+                document.getElementById('passwordModal').style.display = 'none';
+            }
+
+            const inputField = document.getElementById('passInput');
+            if (inputField) {
+                inputField.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
         });
 
-        function closeDonationModal() {
-            document.getElementById('donationModal').style.display = 'none';
+        function checkPassword() {
+            const inputField = document.getElementById('passInput');
+            const errorElem = document.getElementById('passError');
+            if (!inputField || !errorElem) return;
+
+            const inputVal = inputField.value.trim();
+
+            if (inputVal === MASTER_PASSWORD) {
+                localStorage.setItem('vivamax_unlocked', 'true');
+                errorElem.style.display = 'none';
+                document.getElementById('passwordModal').style.display = 'none';
+            } else {
+                errorElem.style.display = 'flex';
+            }
         }
 
-        function openDonationModal() {
-            document.getElementById('donationModal').style.display = 'flex';
+        function lockVault() {
+            localStorage.removeItem('vivamax_unlocked');
+            document.getElementById('passwordModal').style.display = 'flex';
+            const inputField = document.getElementById('passInput');
+            if (inputField) inputField.value = '';
+            const errorElem = document.getElementById('passError');
+            if (errorElem) errorElem.style.display = 'none';
         }
 
         function copyGcashNumber() {
             navigator.clipboard.writeText("+639450892979");
             const btnText = document.getElementById('copyBtnText');
-            btnText.textContent = "Nakopya na sa Clipboard! (Copied!)";
-            setTimeout(() => {
-                btnText.textContent = "Kopyahin ang GCash Number (Copy)";
-            }, 3000);
+            if (btnText) {
+                btnText.textContent = "Nakopya na sa Clipboard! (Copied!)";
+                setTimeout(() => {
+                    btnText.textContent = "Kopyahin ang GCash Number (Copy)";
+                }, 3000);
+            }
         }
 
         function renderDirectory(shows) {
@@ -253,10 +269,10 @@
                 `;
             });
             grid.innerHTML = html;
-            document.getElementById('showCountLabel').textContent = `${shows.length} Shows Available`;
+            const countLabel = document.getElementById('showCountLabel');
+            if (countLabel) countLabel.textContent = `${shows.length} Shows Available`;
         }
 
-        // Fetch live view counts safely in the background without blocking rendering
         function fetchAllLiveViews() {
             showsDatabase.forEach(show => {
                 fetch(`https://api.countapi.xyz/get/vivamaxpulse/${show.id}`)
@@ -267,7 +283,7 @@
                             if (el) el.textContent = data.value.toLocaleString();
                         }
                     })
-                    .catch(() => {}); // silent fail fallback
+                    .catch(() => {});
             });
         }
 
@@ -281,13 +297,13 @@
                         viewElement.textContent = data.value.toLocaleString();
                     }
                 }
-            } catch (e) {
-                // Silently handle network errors
-            }
+            } catch (e) {}
         }
 
         function filterShows() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            const query = searchInput.value.toLowerCase().trim();
             const filtered = showsDatabase.filter(s => s.title.toLowerCase().includes(query));
             renderDirectory(filtered);
             fetchAllLiveViews();
@@ -297,38 +313,56 @@
             const show = showsDatabase.find(s => s.id === showId);
             if (!show) return;
 
-            // Increment global count on click for everyone worldwide
             hitGlobalViewCounter(showId);
 
             const episode = show.episodes[epIndex] || show.episodes[0];
 
-            document.getElementById('playerShowTitle').textContent = show.title;
-            document.getElementById('playerEpisodeSubtitle').textContent = `Episode ${episode.ep}: ${episode.title}`;
-            document.getElementById('activePlayerFrame').src = episode.link;
+            const titleEl = document.getElementById('playerShowTitle');
+            if (titleEl) titleEl.textContent = show.title;
+
+            const subEl = document.getElementById('playerEpisodeSubtitle');
+            if (subEl) subEl.textContent = `Episode ${episode.ep}: ${episode.title}`;
+
+            const frameEl = document.getElementById('activePlayerFrame');
+            if (frameEl) frameEl.src = episode.link;
 
             const epContainer = document.getElementById('episodeButtonsContainer');
-            let epHtml = '';
-            show.episodes.forEach((ep, idx) => {
-                const isActive = idx === epIndex;
-                epHtml += `
-                    <button type="button" onclick="openWatchView('${show.id}', ${idx})" class="w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition cursor-pointer border ${isActive ? 'bg-pulseRed border-pulseRed text-white font-bold shadow-lg shadow-pulseRed/20' : 'bg-[#0b0b0e] border-pulseBorder hover:border-neutral-500 text-neutral-300'}">
-                        <span class="text-xs">Episode ${ep.ep}</span>
-                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                    </button>
-                `;
-            });
-            epContainer.innerHTML = epHtml;
-            document.getElementById('episodeCountBadge').textContent = `${show.episodes.length} Eps`;
+            if (epContainer) {
+                let epHtml = '';
+                show.episodes.forEach((ep, idx) => {
+                    const isActive = idx === epIndex;
+                    epHtml += `
+                        <button type="button" onclick="openWatchView('${show.id}', ${idx})" class="w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition cursor-pointer border ${isActive ? 'bg-pulseRed border-pulseRed text-white font-bold shadow-lg shadow-pulseRed/20' : 'bg-[#0b0b0e] border-pulseBorder hover:border-neutral-500 text-neutral-300'}">
+                            <span class="text-xs">Episode ${ep.ep}</span>
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    `;
+                });
+                epContainer.innerHTML = epHtml;
+            }
 
-            document.getElementById('homeDirectory').style.display = 'none';
-            document.getElementById('watchView').style.display = 'block';
+            const badgeEl = document.getElementById('episodeCountBadge');
+            if (badgeEl) badgeEl.textContent = `${show.episodes.length} Eps`;
+
+            const homeDir = document.getElementById('homeDirectory');
+            if (homeDir) homeDir.style.display = 'none';
+
+            const watchView = document.getElementById('watchView');
+            if (watchView) watchView.style.display = 'block';
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function returnHome() {
-            document.getElementById('activePlayerFrame').src = '';
-            document.getElementById('watchView').style.display = 'none';
-            document.getElementById('homeDirectory').style.display = 'block';
+            const frameEl = document.getElementById('activePlayerFrame');
+            if (frameEl) frameEl.src = '';
+
+            const watchView = document.getElementById('watchView');
+            if (watchView) watchView.style.display = 'none';
+
+            const homeDir = document.getElementById('homeDirectory');
+            if (homeDir) homeDir.style.display = 'block';
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
