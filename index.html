@@ -31,34 +31,39 @@
 </head>
 <body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
 
-    <!-- PASSWORD GATE MODAL -->
-    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md px-4">
-        <div class="w-full max-w-md p-10 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
-            <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 bg-pulseRed/15 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed text-2xl shadow-inner">
-                <i class="fa-solid fa-lock"></i>
+    <!-- DONATION POPUP MODAL (Appears on entry) -->
+    <div id="donationModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
+        <div class="w-full max-w-md p-8 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
+            
+            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed text-xl shadow-inner">
+                <i class="fa-solid fa-heart"></i>
             </div>
 
-            <h1 class="text-2xl font-black text-white tracking-wider mb-1">VIVAMAX PULSE</h1>
-            <p class="text-xs text-neutral-400 mb-6">Enter access password to unlock portal.</p>
+            <h2 class="text-xl font-black text-white tracking-wider mb-2">SUPORTAHAN ANG WEBSITE</h2>
+            <p class="text-xs text-neutral-300 mb-5 leading-relaxed">
+                Para mapanatiling bukas at libre ang website na ito, mangyaring mag-donate ng kahit anong halaga sa aming GCash account. Maraming salamat sa inyong suporta! ❤️
+            </p>
             
-            <div class="space-y-4 text-left">
-                <div>
-                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Enter Password (NETFLIX2026)..." type="password">
-                    <p id="passError" class="text-red-400 text-xs mt-2 hidden font-medium flex items-center space-x-1">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i> <span>Incorrect password. Try again!</span>
-                    </p>
+            <!-- GCash Account Details Box -->
+            <div class="bg-[#0b0b0e] border border-pulseBorder rounded-xl p-4 mb-5 text-left space-y-2">
+                <div class="flex justify-between items-center text-xs text-neutral-400">
+                    <span>Account Name:</span>
+                    <strong class="text-white font-mono tracking-wider">RO••••E C.</strong>
                 </div>
-                
-                <button type="button" onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
-                    Unlock Portal <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                <div class="flex justify-between items-center text-xs text-neutral-400">
+                    <span>GCash Number:</span>
+                    <strong class="text-pulseRed font-mono tracking-widest text-sm">+63 945 089 2979</strong>
+                </div>
+                <button type="button" onclick="copyGcashNumber()" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center space-x-1.5 cursor-pointer shadow">
+                    <i class="fa-regular fa-copy"></i>
+                    <span id="copyBtnText">Kopyahin ang GCash Number (Copy)</span>
                 </button>
             </div>
-            
-            <div class="mt-6 pt-4 border-t border-pulseBorder text-[11px] text-neutral-500 flex justify-between items-center">
-                <span>Secure 18+ Vault</span>
-                <span class="text-emerald-500 font-mono"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Encrypted</span>
+
+            <div class="space-y-2.5">
+                <button type="button" onclick="closeDonationModal()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
+                    Panoorin Na (Watch Now) <i class="fa-solid fa-play ml-1.5 text-[10px]"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -81,8 +86,9 @@
                 </span>
                 <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search dramas..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
             </div>
-            <button type="button" onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3 py-2 rounded-lg text-xs transition cursor-pointer text-neutral-300">
-                <i class="fa-solid fa-lock text-pulseRed"></i>
+            <button type="button" onclick="openDonationModal()" title="Support Us" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-pulseRed font-bold flex items-center space-x-1.5">
+                <i class="fa-solid fa-heart"></i>
+                <span class="hidden sm:inline">Donate</span>
             </button>
         </div>
     </header>
@@ -141,11 +147,9 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const MASTER_PASSWORD = "NETFLIX2026";
-
         const showsDatabase = [
             {
-                id: "show-1",
+                id: "show_simple_sexy_2026",
                 title: "Simple yet Sexy",
                 poster: "https://cdn.myanimelist.net/images/anime/1139/110273.jpg",
                 badge: "COMPLETED",
@@ -154,7 +158,7 @@
                 ]
             },
             {
-                id: "show-2",
+                id: "show_furachi_2026",
                 title: "Furachi",
                 poster: "https://cdn.myanimelist.net/images/anime/1960/157146.jpg",
                 badge: "COMPLETED",
@@ -190,9 +194,8 @@
                     { ep: 1, title: "Completed", link: "https://playmogo.com/e/qw82n1rb074v" },
                 ]
             }
-
             {
-                id: "show-3",
+                id: "show_hhh_triple_2026",
                 title: "HHH Triple Ecchi",
                 poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
                 badge: "COMPLETED",
@@ -204,41 +207,24 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             renderDirectory(showsDatabase);
-
-            if (localStorage.getItem('vivamax_unlocked') === 'true') {
-                document.getElementById('passwordModal').style.display = 'none';
-            }
-
-            const inputField = document.getElementById('passInput');
-            if (inputField) {
-                inputField.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        checkPassword();
-                    }
-                });
-            }
+            fetchAllLiveViews();
         });
 
-        function checkPassword() {
-            const inputElem = document.getElementById('passInput');
-            const errorElem = document.getElementById('passError');
-            if (!inputElem || !errorElem) return;
-
-            const val = inputElem.value.trim();
-            if (val === MASTER_PASSWORD) {
-                localStorage.setItem('vivamax_unlocked', 'true');
-                errorElem.style.display = 'none';
-                document.getElementById('passwordModal').style.display = 'none';
-            } else {
-                errorElem.style.display = 'flex';
-            }
+        function closeDonationModal() {
+            document.getElementById('donationModal').style.display = 'none';
         }
 
-        function lockVault() {
-            localStorage.removeItem('vivamax_unlocked');
-            document.getElementById('passwordModal').style.display = 'flex';
-            document.getElementById('passInput').value = '';
-            document.getElementById('passError').style.display = 'none';
+        function openDonationModal() {
+            document.getElementById('donationModal').style.display = 'flex';
+        }
+
+        function copyGcashNumber() {
+            navigator.clipboard.writeText("+639450892979");
+            const btnText = document.getElementById('copyBtnText');
+            btnText.textContent = "Nakopya na sa Clipboard! (Copied!)";
+            setTimeout(() => {
+                btnText.textContent = "Kopyahin ang GCash Number (Copy)";
+            }, 3000);
         }
 
         function renderDirectory(shows) {
@@ -247,9 +233,6 @@
 
             let html = '';
             shows.forEach(show => {
-                const viewKey = `views_${show.id}`;
-                const viewsCount = localStorage.getItem(viewKey) || Math.floor(Math.random() * 3000 + 1200);
-
                 html += `
                     <div onclick="openWatchView('${show.id}', 0)" class="poster-card group bg-pulseCard border border-pulseBorder rounded-xl overflow-hidden shadow-xl cursor-pointer flex flex-col justify-between">
                         <div class="relative aspect-[2/3] w-full overflow-hidden bg-black">
@@ -262,7 +245,7 @@
                                 <p class="text-[10px] text-neutral-400">${show.episodes.length} Episodes</p>
                             </div>
                             <div class="mt-3 pt-2 border-t border-pulseBorder flex justify-between items-center text-[10px] text-neutral-400 font-mono">
-                                <span><i class="fa-solid fa-eye text-pulseRed mr-1"></i>${parseInt(viewsCount).toLocaleString()}</span>
+                                <span><i class="fa-solid fa-eye text-pulseRed mr-1"></i><span id="views_${show.id}">1,420</span></span>
                                 <span class="text-pulseRed font-bold">Watch</span>
                             </div>
                         </div>
@@ -273,21 +256,51 @@
             document.getElementById('showCountLabel').textContent = `${shows.length} Shows Available`;
         }
 
+        // Fetch live view counts safely in the background without blocking rendering
+        function fetchAllLiveViews() {
+            showsDatabase.forEach(show => {
+                fetch(`https://api.countapi.xyz/get/vivamaxpulse/${show.id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && typeof data.value === 'number') {
+                            const el = document.getElementById(`views_${show.id}`);
+                            if (el) el.textContent = data.value.toLocaleString();
+                        }
+                    })
+                    .catch(() => {}); // silent fail fallback
+            });
+        }
+
+        async function hitGlobalViewCounter(showId) {
+            try {
+                let response = await fetch(`https://api.countapi.xyz/hit/vivamaxpulse/${showId}`);
+                let data = await response.json();
+                if (data && typeof data.value === 'number') {
+                    const viewElement = document.getElementById(`views_${showId}`);
+                    if (viewElement) {
+                        viewElement.textContent = data.value.toLocaleString();
+                    }
+                }
+            } catch (e) {
+                // Silently handle network errors
+            }
+        }
+
         function filterShows() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const filtered = showsDatabase.filter(s => s.title.toLowerCase().includes(query));
             renderDirectory(filtered);
+            fetchAllLiveViews();
         }
 
         function openWatchView(showId, epIndex) {
             const show = showsDatabase.find(s => s.id === showId);
             if (!show) return;
 
-            const episode = show.episodes[epIndex] || show.episodes[0];
+            // Increment global count on click for everyone worldwide
+            hitGlobalViewCounter(showId);
 
-            const viewKey = `views_${show.id}`;
-            let currentViews = parseInt(localStorage.getItem(viewKey) || '1200', 10) + 1;
-            localStorage.setItem(viewKey, currentViews);
+            const episode = show.episodes[epIndex] || show.episodes[0];
 
             document.getElementById('playerShowTitle').textContent = show.title;
             document.getElementById('playerEpisodeSubtitle').textContent = `Episode ${episode.ep}: ${episode.title}`;
