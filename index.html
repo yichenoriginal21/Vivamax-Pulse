@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vivamax Pulse</title>
+    <title>Vivamax Pulse - Free Streaming Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,54 +31,8 @@
 </head>
 <body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
 
-    <!-- SUPPORTER / PASSWORD GATE MODAL -->
-    <div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md px-4">
-        <div class="w-full max-w-md p-8 rounded-2xl bg-pulseCard border border-pulseBorder shadow-2xl relative text-center">
-            
-            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed text-xl shadow-inner">
-                <i class="fa-solid fa-lock"></i>
-            </div>
-
-            <h2 class="text-xl font-black text-white tracking-wider mb-2">SUPORTAHAN ANG WEBSITE</h2>
-            <p class="text-xs text-neutral-300 mb-4 leading-relaxed">
-                Para mapanatiling bukas ang website na ito, mangyaring mag-donate sa aming GCash account. Pagkatapos mag-donate, makukuha mo ang secret password para makapanood! ❤️
-            </p>
-            
-            <!-- GCash Account Details Box -->
-            <div class="bg-[#0b0b0e] border border-pulseBorder rounded-xl p-4 mb-4 text-left space-y-2">
-                <div class="flex justify-between items-center text-xs text-neutral-400">
-                    <span>Account Name:</span>
-                    <strong class="text-white font-mono tracking-wider">RO••••E C.</strong>
-                </div>
-                <div class="flex justify-between items-center text-xs text-neutral-400">
-                    <span>GCash Number:</span>
-                    <strong class="text-pulseRed font-mono tracking-widest text-sm">+63 945 089 2979</strong>
-                </div>
-                <button type="button" onclick="copyGcashNumber()" class="w-full mt-1.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-bold py-2 rounded transition flex items-center justify-center space-x-1 cursor-pointer">
-                    <i class="fa-regular fa-copy"></i>
-                    <span id="copyBtnText">Kopyahin ang GCash Number (Copy)</span>
-                </button>
-            </div>
-
-            <!-- Password Entry for Supporters/Admins -->
-            <div class="space-y-3 text-left border-t border-pulseBorder pt-4">
-                <label class="block text-[11px] text-neutral-400 font-mono">May password ka na ba galing sa admin? Ilagay dito:</label>
-                <div>
-                    <input id="passInput" class="w-full bg-[#0b0b0e] border border-pulseBorder text-sm text-white px-4 py-3 rounded-xl focus:outline-none focus:border-pulseRed transition font-mono shadow-inner" placeholder="Ilagay ang Secret Password..." type="password">
-                    <p id="passError" class="text-red-400 text-xs mt-1.5 hidden font-medium flex items-center space-x-1">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i> <span>Maling password. Mag-donate muna para makuha ito!</span>
-                    </p>
-                </div>
-                
-                <button type="button" onclick="checkPassword()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-xs tracking-wider uppercase cursor-pointer shadow-lg shadow-pulseRed/30">
-                    I-unlock ang Website <i class="fa-solid fa-arrow-right ml-1.5"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- TOP HEADER NAVBAR -->
-    <header class="sticky top-0 z-40 bg-[#13131a]/90 backdrop-blur-md border-b border-pulseBorder px-4 sm:px-8 py-3.5 flex justify-between items-center">
+    <header class="sticky top-0 z-40 bg-[#13131a]/95 backdrop-blur-md border-b border-pulseBorder px-4 sm:px-8 py-3.5 flex justify-between items-center shadow-lg">
         <div class="flex items-center space-x-6">
             <div class="flex items-center space-x-2.5 cursor-pointer" onclick="returnHome()">
                 <div class="w-8 h-8 rounded bg-pulseRed flex items-center justify-center font-black text-white shadow-lg">
@@ -89,29 +43,62 @@
         </div>
 
         <div class="flex items-center space-x-3">
-            <div class="relative w-40 sm:w-72">
+            <div class="relative w-36 sm:w-64">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </span>
-                <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search dramas..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
+                <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
             </div>
-            <button type="button" onclick="lockVault()" title="Lock Session" class="bg-pulseCard hover:bg-pulseBorder border border-pulseBorder px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-pulseRed font-bold flex items-center space-x-1.5">
-                <i class="fa-solid fa-lock"></i>
-                <span class="hidden sm:inline">I-lock</span>
-            </button>
+            
+            <!-- Telegram Help Button -->
+            <a href="https://t.me/Mizuhara_chan" target="_blank" title="Telegram Support" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow">
+                <i class="fa-brands fa-telegram text-sm"></i>
+                <span class="hidden md:inline">Support</span>
+            </a>
         </div>
     </header>
 
     <!-- MAIN HOMEPAGE DIRECTORY VIEW -->
-    <main id="homeDirectory" class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-        <div class="mb-6 flex justify-between items-center">
-            <h2 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
+    <main id="homeDirectory" class="max-w-7xl mx-auto px-4 sm:px-8 py-6">
+        
+        <!-- HERO BANNER & DONATION SECTION -->
+        <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-pulseCard via-[#1c1c28] to-pulseCard border border-pulseBorder p-6 sm:p-10 mb-8 shadow-2xl">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-pulseRed/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="max-w-2xl relative z-10">
+                <span class="inline-flex items-center space-x-1.5 bg-pulseRed/20 text-pulseRed text-[11px] font-bold px-3 py-1 rounded-full border border-pulseRed/30 mb-3 font-mono">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Community Supported Streaming</span>
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-black text-white tracking-wide mb-3">Maligayang Pagdating sa Vivamax Pulse!</h2>
+                <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-6">
+                    Ang website na ito ay nananatiling libre at bukas para sa lahat sa pamamagitan ng inyong tulong. Kung nais ninyong suportahan ang pagpapanatili ng server at pagdagdag ng mga bagong palabas, maaari kayong mag-donate ng kahit magkano sa aming GCash account. Maraming salamat! ❤️
+                </p>
+
+                <!-- GCash Quick Box -->
+                <div class="bg-[#0b0b0e]/90 border border-pulseBorder rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="space-y-1 text-xs">
+                        <div class="text-neutral-400">GCash Account: <strong class="text-white font-mono">RO••••E C.</strong></div>
+                        <div class="text-neutral-400">Number: <strong class="text-pulseRed font-mono text-sm">+63 945 089 2979</strong></div>
+                    </div>
+                    <button type="button" onclick="copyGcashNumber()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition flex items-center justify-center space-x-1.5 shadow cursor-pointer">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copyBtnText">Kopyahin ang Number</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHOWS GRID HEADER -->
+        <div class="mb-6 flex justify-between items-center border-b border-pulseBorder pb-3">
+            <h3 class="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
                 <i class="fa-solid fa-fire text-pulseRed"></i>
                 <span>Trending Releases</span>
-            </h2>
+            </h3>
             <span class="text-xs text-neutral-400 font-mono" id="showCountLabel">3 Shows Available</span>
         </div>
 
+        <!-- DIRECTORY GRID -->
         <div id="directoryGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             <!-- Dynamically populated -->
         </div>
@@ -154,11 +141,14 @@
         </div>
     </div>
 
+    <!-- FOOTER -->
+    <footer class="border-t border-pulseBorder bg-[#13131a] py-6 px-4 sm:px-8 mt-12 text-center text-xs text-neutral-400">
+        <p class="mb-2">Vivamax Pulse © 2026 — Built with ❤️ for free streaming.</p>
+        <p>Need assistance or have questions? Contact admin on Telegram: <a href="https://t.me/Mizuhara_chan" target="_blank" class="text-pulseRed font-bold hover:underline">@Mizuhara_chan</a></p>
+    </footer>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // MASTER PASSWORD FOR DONORS & ADMIN
-        const MASTER_PASSWORD = "NETFLIX2026";
-
         const showsDatabase = [
             {
                 id: "show_simple_sexy_2026",
@@ -167,6 +157,15 @@
                 badge: "COMPLETED",
                 episodes: [
                     { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/1nog4osmcz1t" }
+                ]
+            },
+            {
+                id: "show_furachi_2026",
+                title: "Furachi",
+                poster: "https://cdn.myanimelist.net/images/anime/1960/157146.jpg",
+                badge: "COMPLETED",
+                episodes: [
+                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/si03wjqkbagr" }
                 ]
             },
             {
@@ -198,15 +197,6 @@
                 ]
             }
             {
-                id: "show_furachi_2026",
-                title: "Furachi",
-                poster: "https://cdn.myanimelist.net/images/anime/1960/157146.jpg",
-                badge: "COMPLETED",
-                episodes: [
-                    { ep: 1, title: "Episode 1", link: "https://playmogo.com/e/si03wjqkbagr" }
-                ]
-            },
-            {
                 id: "show_hhh_triple_2026",
                 title: "HHH Triple Ecchi",
                 poster: "https://cdn.myanimelist.net/images/anime/1874/113220.jpg",
@@ -220,53 +210,43 @@
         window.addEventListener('DOMContentLoaded', function() {
             renderDirectory(showsDatabase);
             fetchAllLiveViews();
-
-            if (localStorage.getItem('vivamax_unlocked') === 'true') {
-                document.getElementById('passwordModal').style.display = 'none';
-            }
-
-            const inputField = document.getElementById('passInput');
-            if (inputField) {
-                inputField.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        checkPassword();
-                    }
-                });
-            }
         });
 
-        function checkPassword() {
-            const inputField = document.getElementById('passInput');
-            const errorElem = document.getElementById('passError');
-            if (!inputField || !errorElem) return;
-
-            const inputVal = inputField.value.trim();
-
-            if (inputVal === MASTER_PASSWORD) {
-                localStorage.setItem('vivamax_unlocked', 'true');
-                errorElem.style.display = 'none';
-                document.getElementById('passwordModal').style.display = 'none';
+        function copyGcashNumber() {
+            const textToCopy = "+639450892979";
+            
+            // Safe fallback clipboard copy method to prevent permission policy errors
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopiedFeedback();
+                }).catch(() => {
+                    fallbackCopyText(textToCopy);
+                });
             } else {
-                errorElem.style.display = 'flex';
+                fallbackCopyText(textToCopy);
             }
         }
 
-        function lockVault() {
-            localStorage.removeItem('vivamax_unlocked');
-            document.getElementById('passwordModal').style.display = 'flex';
-            const inputField = document.getElementById('passInput');
-            if (inputField) inputField.value = '';
-            const errorElem = document.getElementById('passError');
-            if (errorElem) errorElem.style.display = 'none';
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";  // Avoid scrolling to bottom
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showCopiedFeedback();
+            } catch (err) {}
+            document.body.removeChild(textArea);
         }
 
-        function copyGcashNumber() {
-            navigator.clipboard.writeText("+639450892979");
+        function showCopiedFeedback() {
             const btnText = document.getElementById('copyBtnText');
             if (btnText) {
-                btnText.textContent = "Nakopya na sa Clipboard! (Copied!)";
+                btnText.textContent = "Nakopya na! (Copied!)";
                 setTimeout(() => {
-                    btnText.textContent = "Kopyahin ang GCash Number (Copy)";
+                    btnText.textContent = "Kopyahin ang Number";
                 }, 3000);
             }
         }
