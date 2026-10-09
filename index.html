@@ -22,14 +22,85 @@
         }
     </script>
     <style>
+        /* Custom scrollbar and card hover animations */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0b0b0e; }
         ::-webkit-scrollbar-thumb { background: #272732; border-radius: 9999px; }
         .poster-card { transition: transform 0.25s ease; }
         .poster-card:hover { transform: translateY(-6px); }
+
+        /* Security Lock Screen Shake Effect on Incorrect Passcode */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Glassmorphism blur backdrop */
+        .glass-panel {
+            background: rgba(19, 19, 26, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
-<body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white">
+<body class="bg-pulseDark text-white min-h-screen font-sans selection:bg-pulseRed selection:text-white relative">
+
+    <!-- ========================================== -->
+    <!-- SECURITY LOCK SCREEN OVERLAY               -->
+    <!-- ========================================== -->
+    <div id="securityOverlay" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0b0b0e]/95 backdrop-blur-xl transition-opacity duration-300">
+        <div id="lockModal" class="glass-panel w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative text-center border border-pulseBorder overflow-hidden">
+            <!-- Background Glow Decor -->
+            <div class="absolute -top-16 -left-16 w-32 h-32 bg-pulseRed/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -right-16 w-32 h-32 bg-pulseRed/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- Lock Icon Badge -->
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pulseRed/10 border border-pulseRed/30 flex items-center justify-center text-pulseRed shadow-lg">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+
+            <h2 class="text-2xl font-black text-white tracking-wider mb-1">VIVAMAX<span class="text-pulseRed">PULSE</span></h2>
+            <p class="text-xs text-neutral-400 mb-6">Restricted Portal — Enter Passcode to Unlock Content</p>
+
+            <!-- Passcode Form -->
+            <div class="space-y-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-neutral-400">
+                        <i class="fa-solid fa-key text-xs"></i>
+                    </span>
+                    <input type="password" id="passcodeInput" placeholder="Enter Access Code..." 
+                           class="w-full bg-[#0b0b0e]/80 border border-pulseBorder text-sm text-white pl-10 pr-10 py-3 rounded-xl focus:outline-none focus:border-pulseRed transition placeholder-neutral-500 font-mono"
+                           onkeydown="if(event.key === 'Enter') unlockPortal()">
+                    
+                    <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-neutral-400 hover:text-white transition">
+                        <i id="toggleEyeIcon" class="fa-solid fa-eye text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Error Message Alert Box -->
+                <div id="errorMessage" class="hidden text-xs text-red-400 bg-red-950/40 border border-red-500/30 py-2.5 px-3 rounded-lg flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="errorText">Invalid passcode! Please try again.</span>
+                </div>
+
+                <button type="button" onclick="unlockPortal()" class="w-full bg-pulseRed hover:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-pulseRed/30 flex items-center justify-center space-x-2 cursor-pointer">
+                    <span>Unlock Portal</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Hint / Help Footer -->
+            <p class="text-[11px] text-neutral-500 mt-6 font-mono">
+                Default Passcode: <span class="text-neutral-300 font-bold">VIVA2026</span>
+            </p>
+        </div>
+    </div>
+
 
     <!-- TOP HEADER NAVBAR -->
     <header class="sticky top-0 z-40 bg-[#13131a]/95 backdrop-blur-md border-b border-pulseBorder px-4 sm:px-8 py-3.5 flex justify-between items-center shadow-lg">
@@ -49,14 +120,21 @@
                 </span>
                 <input type="text" id="searchInput" oninput="filterShows()" placeholder="Search..." class="w-full bg-[#0b0b0e] border border-pulseBorder text-xs text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:border-pulseRed transition">
             </div>
-            
+
             <!-- Telegram Help Button -->
             <a href="https://t.me/Mizuhara_chan" target="_blank" title="Telegram Support" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow">
                 <i class="fa-brands fa-telegram text-sm"></i>
                 <span class="hidden md:inline">Support</span>
             </a>
+
+            <!-- Lock / Logout Button -->
+            <button type="button" onclick="lockPortal()" title="Lock / Logout Portal" class="bg-pulseBorder hover:bg-neutral-800 text-neutral-300 hover:text-pulseRed border border-neutral-700 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 shadow cursor-pointer">
+                <i class="fa-solid fa-lock text-xs"></i>
+                <span class="hidden md:inline">Lock</span>
+            </button>
         </div>
     </header>
+
 
     <!-- MAIN HOMEPAGE DIRECTORY VIEW -->
     <main id="homeDirectory" class="max-w-7xl mx-auto px-4 sm:px-8 py-6">
@@ -182,9 +260,90 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        /* =======================================================
+           SECURITY & PASSCODE CONFIGURATION
+           ======================================================= */
+        // Change the portal access code here:
+        const PORTAL_PASSCODE = "VIVA2028"; // Default passcode (e.g. '1234' or 'VIVA2026')
+        const AUTH_STORAGE_KEY = "vivamax_authenticated_session";
+
+        // Check login status on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            checkAuthenticationState();
+            renderDirectory(showsDatabase);
+            fetchAllLiveViews();
+        });
+
+        function checkAuthenticationState() {
+            const isAuthenticated = localStorage.getItem(AUTH_STORAGE_KEY) === "true";
+            const overlay = document.getElementById('securityOverlay');
+            if (isAuthenticated) {
+                overlay.classList.add('hidden');
+            } else {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    const passInput = document.getElementById('passcodeInput');
+                    if (passInput) passInput.focus();
+                }, 100);
+            }
+        }
+
+        function unlockPortal() {
+            const input = document.getElementById('passcodeInput');
+            const errorMsg = document.getElementById('errorMessage');
+            const modal = document.getElementById('lockModal');
+            const userEnteredCode = input ? input.value.trim() : '';
+
+            if (userEnteredCode === PORTAL_PASSCODE) {
+                localStorage.setItem(AUTH_STORAGE_KEY, "true");
+                document.getElementById('securityOverlay').classList.add('hidden');
+                if (errorMsg) errorMsg.classList.add('hidden');
+                if (input) input.value = '';
+            } else {
+                // Trigger Shake Animation and Error Alert
+                if (errorMsg) errorMsg.classList.remove('hidden');
+                if (modal) {
+                    modal.classList.remove('animate-shake');
+                    // Force DOM Reflow to re-trigger animation
+                    void modal.offsetWidth;
+                    modal.classList.add('animate-shake');
+                }
+            }
+        }
+
+        function lockPortal() {
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+            const overlay = document.getElementById('securityOverlay');
+            if (overlay) overlay.classList.remove('hidden');
+            returnHome();
+            const passInput = document.getElementById('passcodeInput');
+            if (passInput) {
+                passInput.value = '';
+                passInput.focus();
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('passcodeInput');
+            const eyeIcon = document.getElementById('toggleEyeIcon');
+            if (!passInput || !eyeIcon) return;
+
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passInput.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        /* =======================================================
+           ORIGINAL VIVAMAX PULSE PORTAL LOGIC
+           ======================================================= */
         const showsDatabase = [
-
-
+            
          {
                 id: "show-29",
                 title: "Doctor X: Mafia in White",
@@ -473,11 +632,6 @@
                 ]
             }
         ];
-
-        window.addEventListener('DOMContentLoaded', function() {
-            renderDirectory(showsDatabase);
-            fetchAllLiveViews();
-        });
 
         function copyGcashNumber() {
             const textToCopy = "+639450892979";
